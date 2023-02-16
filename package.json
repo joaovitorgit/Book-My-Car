@@ -1,0 +1,26 @@
+{
+  "name": "bookmycar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node ./seed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaovitorgit/Book-My-Car.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joaovitorgit/Book-My-Car/issues"
+  },
+  "homepage": "https://github.com/joaovitorgit/Book-My-Car#readme",
+  "devDependencies": {
+    "faker": "^5.5.3"
+  }
+}
