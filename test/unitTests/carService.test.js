@@ -19,11 +19,19 @@ describe('CarService Suite tests', ()=>{
             cars: carsDatabase
         })
     })
-    it("Should retrieve a random position from an array", async()=>{
+    it("Should retrieve a random position from an array", ()=>{
         const data = [ 0 , 1, 2, 3, 4]
         const result = carService.getRandomPositionFromArray(data)
-
         expect(result).to.be.lte(data.length).and.be.gte(0)
+    })
+    it("Should retrive the first id from carIds in carCategory", ()=>{
+        const carCategory = mocks.validCarCategory
+        const carIdIndex = 0
+
+        const result = carService.chooseRandomCar(carCategory)
+        const expected = carCategory.carIds[carIdIndex]
+
+        expect (result).to.be.equal(expected)
     })
     // it('Must return a avaiable car of a given car category', async ()=>{
     //     const car = mocks.validCar
