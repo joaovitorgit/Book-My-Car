@@ -1,8 +1,9 @@
-const {describe, it} = require('mocha')
+const {describe, it, before, beforeEach, afterEach} = require('mocha')
 const CarService = require('../../src/service/carService')
 const {join} = require('path')
 const assert = require('assert')
 const {expect} = require('chai')
+const sinon  = require('sinon')
 const carsDatabase = join(__dirname, "./../../database", "cars.json")
 
 const mocks = {
@@ -11,14 +12,23 @@ const mocks = {
     validCustomer: require('./../mocks/valid-customer.json'),
 }
 
-
 describe('CarService Suite tests', ()=>{
     let carService = {}
+    let sandbox = {}
     before(()=>{
         carService = new CarService({
             cars: carsDatabase
         })
     })
+
+    beforeEach(()=>{
+        sandbox = sinon.createSandbox()
+    })
+
+    afterEach(()=>{
+        sandbox.restore()
+    })
+
     it("Should retrieve a random position from an array", ()=>{
         const data = [ 0 , 1, 2, 3, 4]
         const result = carService.getRandomPositionFromArray(data)
@@ -28,19 +38,38 @@ describe('CarService Suite tests', ()=>{
         const carCategory = mocks.validCarCategory
         const carIdIndex = 0
 
+        sandbox.stub(
+            carService,
+            carService.getRandomPositionFromArray.name
+        ).returns(carIdIndex)
+
         const result = carService.chooseRandomCar(carCategory)
         const expected = carCategory.carIds[carIdIndex]
-
+        
+        expect(carService.getRandomPositionFromArray.calledOnce).to.be.ok
         expect (result).to.be.equal(expected)
     })
-    // it('Must return a avaiable car of a given car category', async ()=>{
-    //     const car = mocks.validCar
-    //     const carCategory = Object.create(mocks.validCarCategory) 
-    //     carCategory.ids  = [car.id]
-    //     const result = await carService.getAvailableCar(carCategory)
-    //     const expected = car
+    it('Must return a avaiable car of a given car category', async ()=>{
+        const car = mocks.validCar
+        const carCategory = Object.create(mocks.validCarCategory) 
+        carCategory.carIds  = [car.id]
 
-    //     expect(result).to.be.deep.equal(expected)
-    // })
+        sandbox.stub(
+            carService.carRepository,
+            carService.carRepository.find.name,
+        ).resolves(car)
+
+        sandbox.spy(
+            carService,
+            carService.chooseRandomCar.name
+        )
+
+        const result = await carService.getAvailableCar(carCategory)
+        const expected = car
+        
+        expect(carService.chooseRandomCar.calledOnce).to.be.ok
+        expect(carService.carRepository.find.calledWith(car.id)).to.be.ok
+        expect(result).to.be.deep.equal(expected)
+    })
     
 })
